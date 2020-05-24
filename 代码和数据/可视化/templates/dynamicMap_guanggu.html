@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>小宇情感地图</title>
+  <style>
+    html,
+    body {
+      overflow: hidden;
+      margin: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+    #box {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map" style="width: 70%; float: left;"></div>
+  <div id="box" style="width: 30%; float: right;">
+    <div style="height: 60%;">
+      <div style="width: 342px; float: left;">
+        <video id="videoSource" width="100%" height="100%" controls>
+          <source src="{{ url_for('static', filename='data/光谷老校区/video.mp4') }}" type="video/mp4">
+          您的浏览器不支持 video 标签。
+        </video>
+      </div>
+      <div style="width: 118.8px; height: 100%; float: right;">
+        <button id="start" onclick="onPlay()" style="width: 80%; margin: 10px 10%; margin-top: 40px;">开始</button>
+        <button id="pause" onclick="onPause()" style="width: 80%; margin: 10px 10%;">暂停</button>
+        <button id="end" onclick="onStop()" style="width: 80%; margin: 10px 10%;">停止</button>
+        <button id="speed" onclick="onSpeed(2)" style="width: 80%; margin: 10px 10%;">2倍速度</button>
+        <button id="speed" onclick="onSpeed(1)" style="width: 80%; margin: 10px 10%;">原速</button>
+        <button id="speed" onclick="onForwardOrBack(5)" style="width: 80%; margin: 10px 10%;">快进5秒</button>
+        <button id="speed" onclick="onForwardOrBack(10)" style="width: 80%; margin: 10px 10%;">快进10秒</button>
+        <button id="speed" onclick="onForwardOrBack(-5)" style="width: 80%; margin: 10px 10%;">回退5秒</button>
+        <button id="speed" onclick="onForwardOrBack(-10)" style="width: 80%; margin: 10px 10%;">回退10秒</button>
+      </div>
+    </div>
+    <div id="street_scores" style="height: 40%; width: 100%;">
+      <div id="container" />
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/g2.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/data-set.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/l7.js') }}"></script>
+  <script>
+
+    var oVideo = document.getElementById('videoSource');
+
+    const scene = new L7.Scene({
+      id: 'map',
+      map: new L7.GaodeMap({
+        style: 'light',
+        // center: [114.525, 30.47],
+        center: [114.413115, 30.50532948], // 光谷
+        // center: [114.4406479, 30.55424938],
+        pitch: 0,
+        zoom: 16,
+        token: '高德地图token',
+      }),
+    });
+
+    const { DataView } = DataSet;
+    var radar_data;
+    var index = 0;
+    var dv;
+    var chart;
+    fetch("{{ url_for('static', filename='data/光谷老校区/scores.json') }}")
+      .then(res => res.json())
+      .then(data => {
+        radar_data = data;
+        dv = new DataView().source(data[0]);
+        dv.transform({
+          type: 'fold',
+          fields: ['阿宇'], // 展开字段集
+          key: 'user', // key字段
+          value: 'score' // value字段
+        });
+        chart = new G2.Chart({
+          container: 'container',
+          forceFit: true,
+          height: 350,
+          padding: [20, 20, 95, 20]
+        });
+        chart.source(dv, {
+          score: {
+            min: 0,
+            max: 100
+          }
+        });
+        chart.coord('polar', {
+          radius: 0.8
+        });
+        chart.axis('item', {
+          line: null,
+          tickLine: null,
+          grid: {
+            lineStyle: {
+              lineDash: null
+            },
+            hideFirstLine: false
+          }
+        });
+        chart.axis('score', {
+          tickCount: 3,
+          line: null,
+          tickLine: null,
+          grid: {
+            type: 'polygon',
+            lineStyle: {
+              lineDash: null
+            }
+          }
+        });
+        // chart.legend('user', {
+        //   marker: 'circle',
+        //   offset: 30
+        // });
+        chart.line().position('item*score').color('user')
+          .size(1);
+        chart.area().position('item*score').color('user');
+        chart.render();
+      })
+
+    var point_data;
+    var layer;
+    fetch(
+      "{{ url_for('static', filename='data/光谷老校区/heatMap.json') }}"
+    )
+      .then(res => res.json())
+      .then(data => {
+        point_data = data;
+        layer = new L7.HeatmapLayer({})
+          .source(data.slice(0, 1), {
+            parser: {
+              type: 'json',
+              x: 'Longitude',
+              y: 'Latitude'
+            }
+          })
+          .shape('heatmap')
+          .size('Combined_Score1', [0, 1.0]) // weight映射通道
+          .style({
+            intensity: 2,
+            radius: 10,
+            opacity: 1.0,
+            rampColors: {
+              colors: [
+                '#FF4818',
+                '#F7B74A',
+                '#FFF598',
+                '#91EABC',
+                '#2EA9A1',
+                '#206C7C'
+              ].reverse(),
+              positions: [0, 0.2, 0.4, 0.6, 0.8, 1.0]
+            }
+          });
+        scene.addLayer(layer);
+      });
+
+    oVideo.addEventListener("timeupdate", function () {
+      console.log(oVideo.currentTime);
+      index = Math.round(oVideo.currentTime / 0.2)
+      if (index > point_data.length - 1 || index === 0)
+        index = 1
+      layer.setData(point_data.slice(0, index), {
+        parser: {
+          type: 'json',
+          x: 'Longitude',
+          y: 'Latitude'
+        }
+      });
+      scene.render();
+
+      dv.source(radar_data[index])
+      chart.source(dv, {
+        score: {
+          min: 0,
+          max: 100
+        }
+      });
+    }, false)
+
+  </script>
+
+  <script type="text/javascript">
+    var oVideo = document.getElementById('videoSource');
+    // console.log(oVideo)
+
+    // 开始函数
+    function onPlay() {
+      // oVideo.playbackRate = 0.1
+      oVideo.play();
+    }
+
+    // 暂停函数
+    function onPause() {
+      oVideo.pause();
+    }
+
+    // 停止函数
+    function onStop() {
+      oVideo.pause();
+      oVideo.currentTime = 0;
+    }
+
+    // 加速函数
+    function onSpeed(speed_num) {
+      oVideo.play();
+      oVideo.playbackRate = speed_num;
+    }
+
+    // 快进回退函数
+    function onForwardOrBack(second) {
+      newTime = oVideo.currentTime + second;
+      if (newTime < 0) {
+        newTime = 0
+      }
+      oVideo.currentTime = newTime;
+    }
+
+  </script>
+
+</body>
+
+</html>
