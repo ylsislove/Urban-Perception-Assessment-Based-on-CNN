@@ -15,7 +15,8 @@
 
 * 制作App
 通过Android手机自带的位置传感器和GPS，获取到当前位置的经度、纬度、高度、速度、方向、测量精度等信息。同时在数据记录方面做了小小的优化，只有当间隔时间1s同时距离超过4米的时候才会进行记录。这样做的目的是为了防止在红绿灯或堵车等情况下同一个地点记录了过多数据的问题。需要注意的是，通过手机自带的GPS传感器记录下的经纬度是WGS84坐标系下的，后面进行可视化的时候需要根据底图进行坐标转换。
-<img src="App界面展示.jpg" alt="App界面展示" style="zoom:75%;" />
+
+![App界面展示](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/App%E7%95%8C%E9%9D%A2%E5%B1%95%E7%A4%BA.jpg)
 
 * 采集数据
 在需要采集的地点，只需要点击左上角的Capture按钮，就会开始录制视频，同时将位置信息记录到csv文件中，将视频的开始时间和结束时间记录到txt文件中。
@@ -43,17 +44,17 @@
 * 训练结果
 对于六个不同的类别，模型最终训练的结果如下
 
-<img src="beautiful.png" alt="beautiful" style="zoom:75%;" />
+![beautiful](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/beautiful.png)
 
-<img src="boring.png" alt="boring" style="zoom:75%;" />
+![boring](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/boring.png)
 
-<img src="depressing.png" alt="boring" style="zoom:75%;" />
+![depressing](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/depressing.png)
 
-<img src="lively.png" alt="boring" style="zoom:75%;" />
+![lively](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/lively.png)
 
-<img src="safety.png" alt="boring" style="zoom:75%;" />
+![safety](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/safety.png)
 
-<img src="wealthy.png" alt="boring" style="zoom:75%;" />
+![wealthy](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/wealthy.png)
 
 ## 🍱 可视化展示
 
@@ -62,9 +63,10 @@
 ## 🛠️ 结果分析
 通过和 Yao,Y. 的模型对比分析得知，本框架所采用的卷积神经网络对街景情感的预测会更加准确，差异性会更加的明显。 Yao,Y. 在其论文中提出的通过FCN网络进行语义分割，和随机森林拟合，过重的考虑了地物之间的比重关系，而忽略的地物之间的空间关系。因此，对于不同的街景图片，较难体现出其差异性。这也就是，过于追求神经网络的可解释性，可能的后果就是损失精度。
 
-<img src="yaoy.jpg" alt="YaoY模型对光谷地区的safety打分结果" style="zoom:75%;" />
+![YaoY模型对光谷地区的safety打分结果](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/yaoy.jpg)
 
-<img src="my.png" alt="我的模型对光谷地区的safety打分结果" style="zoom:75%;" />
+![我的模型对光谷地区的safety打分结果](https://cdn.jsdelivr.net/gh/ylsislove/Urban-Perception-Assessment-Based-on-CNN/my.png)
+
 
 ## 📜 参考文献
 [1] Yao Y, Liang Z, Yuan Z, et al. A human-machine adversarial scoring framework for urban perception assessment using street-view images[J].
