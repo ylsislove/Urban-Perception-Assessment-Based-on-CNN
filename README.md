@@ -1,6 +1,8 @@
 # Urban-Perception-Assessment-Based-on-CNN
 基于卷积神经网络的城市感知评估
 
+卷积神经网络模型下载及示例代码见：[https://github.com/whuyao/Urban_Perception_CNN_Model](https://github.com/whuyao/Urban_Perception_CNN_Model)
+
 ## 💡 Introductionn
 
 城市感知（Urban perceptions）指的是居民对于城市场所的心理感受，对于城市规划和公共卫生领域有着重要的作用。通常可将对城市场所的心理感受分为beautiful、boring、depressing、lively、safety和wealthy六类。传统上，由于缺乏高通量方法、样本不足，人们对城市感知评估的仍然困难。鉴于这些调查方法成本高、耗时长，因此亟需一个高效率的框架来优化城市感知评估过程。笔者在此提出一个基于卷积神经网络的城市感知分析框架。
