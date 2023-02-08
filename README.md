@@ -9,7 +9,7 @@
 
 ## 🎨 在线访问
 
-[基于卷积神经网络的城市感知可视化](http://www.urbancomp.net/2020/01/10/%e5%9f%ba%e4%ba%8e%e5%8d%b7%e7%a7%af%e7%a5%9e%e7%bb%8f%e7%bd%91%e7%bb%9c%e7%9a%84%e5%9f%8e%e5%b8%82%e6%84%9f%e7%9f%a5%e5%8f%af%e8%a7%86%e5%8c%96/)
+[基于卷积神经网络的城市感知可视化](https://urbancomp.net/archives/urban-perceptions-visualization)
 
 ## ✨ 项目思路
 
